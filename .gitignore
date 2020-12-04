@@ -1,6 +1,10 @@
 dataset*
 
+.idea
+
 .ipynb_checkpoints
 
 venv
 venv*
+
+*/.ipynb_checkpoints/
