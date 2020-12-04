@@ -1,28 +1,33 @@
-Pokémon classifier
+Capstone Proposal
 ==================
-Baptiste Azema
+Baptiste Azema <br>
 December 4th, 2020
 
+# Pokémon classifier
+
 ## Domain Background
-Pokémon are creatures that inhabit the fictional Pokémon World. Each creature has a unique design.
+Pokémon are creatures that inhabit the fictional Pokémon World. Each creature has unique design and skills.
 We will focus on the [Generation One](https://en.wikipedia.org/wiki/List_of_generation_I_Pok%C3%A9mon) featuring
 the original 151 fictional species of creatures introduced in the 1996 Game-Boy games "Pokémon".
 
-As our world is becoming more and more bizarre, the future were Pokémon and Humans coexist might be possible. 
-We might need some tool to identify if a photo shows a Pokémon, a human, and which Pokemon is looks like.
+As our world is becoming more and more bizarre, a future were Pokémon and Humans coexist might be possible. 
+We might need some tool to identify if a photo shows a Pokémon, a human, and which Pokemon it looks like.
 
 ## Problem Statement
 
-This project aims to classify images as Pokémon. When the input image is a Pokémon, the algorithm will respond the
-Pokémon name. When the input image is a human face or anything else, the algorithm will respond if it's human and 
-which Pokémon it looks alike.
+This project aims to classify images as Pokémon species. 
+When the input image is a Pokémon, the algorithm will respond the Pokémon name.
+When the input image is a human face or anything else, the algorithm will respond if it's human and 
+which Pokémon it looks like.
 
-Inspired by [CNN Project: Dog Breed Classifier](https://github.com/udacity/deep-learning-v2-pytorch/tree/master/project-dog-classification)
+Inspired by udacity's [CNN Project: Dog Breed Classifier](https://github.com/udacity/deep-learning-v2-pytorch/tree/master/project-dog-classification)
 
 ## Datasets
     
-- [Pokemon Generation One](https://www.kaggle.com/thedagger/pokemon-generation-one)
-- [Labeled Faces in the Wild Home](http://vis-www.cs.umass.edu/lfw/lfw.tgz)
+- [Pokemon Generation One](https://www.kaggle.com/thedagger/pokemon-generation-one). 
+  This dataset will be used to train and evaluate a classifier of Pokémon species.
+- [Labeled Faces in the Wild Home](http://vis-www.cs.umass.edu/lfw/lfw.tgz).
+  This dataset will be used to evaluate a human face detector.
 
 
 ## Solution Statement
@@ -44,8 +49,7 @@ state-of-the-art Convolutional Neural Networks (CNN) models for classification.
 ## Evaluation Metrics
 
 Evaluation will be done using a "test dataset" not seen by the model but on which we have the "Ground truth".
-We will run the model on the dataset and compare the result with the "Ground truth" using the
-[accuracy_score](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html). 
+We will run the model on the dataset and compare the result with the "Ground truth" using the accuracy score. 
 
 ## Project Design
 
@@ -54,9 +58,10 @@ We will run the model on the dataset and compare the result with the "Ground tru
 - Train a Pokemon classifier using transfer learning with PyTorch on AWS Sagemaker. 
   I'm planning to build a classifier from scratch and then uses transfer learning with 2 pre-trained models to compare the performances.
 
-Then, the client-side application will:
+Then, a python program will:
  - take an image as input
- - detect if it's a Pokemon, a Human, or something else
- - give the name of the Pokémon (if it's a Pokémon), or the Pokémon it looks alike (if it's a Human or something else)
+ - use the Pokemon/Human detector to detect if it's a Pokemon, a Human, or something else
+ - use the trained Pokemon classifier to give the name of the Pokémon (if it's a Pokémon), 
+   or the Pokémon it looks like (if it's a Human or something else)
 
 I would love to deploy this application on Pypi.org and make it available to the world.
