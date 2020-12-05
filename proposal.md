@@ -25,7 +25,9 @@ Inspired by udacity's [CNN Project: Dog Breed Classifier](https://github.com/uda
 ## Datasets
     
 - [Pokemon Generation One](https://www.kaggle.com/thedagger/pokemon-generation-one). 
-  This dataset will be used to train and evaluate a classifier of Pokémon species.
+  
+This dataset will be used to train and evaluate a classifier of Pokémon species.
+
 - [Labeled Faces in the Wild Home](http://vis-www.cs.umass.edu/lfw/lfw.tgz).
   This dataset will be used to evaluate a human face detector.
 

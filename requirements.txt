@@ -4,3 +4,6 @@ torchaudio
 pandas
 matplotlib
 scikit-learn
+opencv-contrib-python
+tqdm
+numpy
