@@ -3,6 +3,7 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.datasets import load_files
+import numpy as np
 
 
 def load_dataset(path):
@@ -79,7 +80,7 @@ def face_detector(img_path):
     faces = face_cascade.detectMultiScale(gray)
     return len(faces) > 0
 
-def imshow_tensor(inp, title=None):
+def imshow_tensor(inp, std_nums, mean_nums, title=None):
     """Imshow for Tensor."""
     inp = inp.numpy().transpose((1, 2, 0))
     inp = std_nums * inp + mean_nums
