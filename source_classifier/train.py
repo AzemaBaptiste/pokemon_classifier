@@ -3,86 +3,66 @@ import copy
 import os
 import time
 
+import numpy as np
 import torch
-import torch.nn as nn
-import torch.optim as optim
-import torch.utils.data
-import torchvision
-import torchvision.transforms as T
-from torch.optim import lr_scheduler
+import torch.optim.lr_scheduler as lr_scheduler
+from torch import optim, nn
 from torch.utils.data import RandomSampler
-from torchvision import models
+from torch.utils.data.sampler import SubsetRandomSampler
+from torchvision import models, transforms
+from torchvision.datasets import ImageFolder
 
 
-def _get_train_data_loader(data_dir, batch_size, classes):
+def _get_train_data_loader(data_dir, batch_size):
     print("Get train data loader.")
 
     mean_nums = [0.485, 0.456, 0.406]
     std_nums = [0.229, 0.224, 0.225]
 
-    transforms = {'train': T.Compose([
-        T.RandomResizedCrop(size=64),
-        T.RandomRotation(degrees=15),
-        T.RandomHorizontalFlip(),
-        T.ToTensor(),
-        T.Normalize(mean_nums, std_nums)
+    transform = {'train': transforms.Compose([
+        transforms.RandomResizedCrop(size=64),
+        transforms.RandomRotation(degrees=15),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean_nums, std_nums)
 
-    ]), 'val': T.Compose([
-        T.Resize(size=64),
-        T.CenterCrop(size=64),
-        T.ToTensor(),
-        T.Normalize(mean_nums, std_nums)
+    ]), 'val': transforms.Compose([
+        transforms.Resize(size=64),
+        # transforms.CenterCrop(size=224),
+        transforms.ToTensor(),
+        transforms.Normalize(mean_nums, std_nums)
 
-    ]), 'test': T.Compose([
-        T.Resize(size=64),
-        T.CenterCrop(size=64),
-        T.ToTensor(),
-        T.Normalize(mean_nums, std_nums)
+    ]), 'test': transforms.Compose([
+        transforms.Resize(size=64),
+        transforms.CenterCrop(size=64),
+        transforms.ToTensor(),
+        transforms.Normalize(mean_nums, std_nums)
     ]),
     }
 
-    # Load Pokemon dataset
-    pokemon_dataset = torchvision.datasets.ImageFolder('%s/Pokemon' % data_dir, transform=transforms['train'])
+    valid_size = 0.2
 
-    # Set class for each Pokemon to 0
-    pokemon_dataset.target_transform = lambda x: classes.index('Pokemon')
-
-    # Split train / test
-    pokemon_test_size = round((len(pokemon_dataset)) * .15)
-    pokemon_train_size = len(pokemon_dataset) - pokemon_test_size
-
-    pokemon_dataset_train, pokemon_dataset_test = torch.utils.data.random_split(pokemon_dataset,
-                                                                                [pokemon_train_size, pokemon_test_size])
-
-    # Load CIFAR 100 dataset
-    cifar100_train = torchvision.datasets.CIFAR100(root=data_dir, train=True, download=True,
-                                                   transform=transforms['train'])
-    cifar100_test = torchvision.datasets.CIFAR100(root=data_dir, train=False, download=True,
-                                                  transform=transforms['test'])
-
-    # Set class for each image to 1
-    cifar100_train.target_transform = lambda x: classes.index('Other')
-    cifar100_test.target_transform = lambda x: classes.index('Other')
-
-    RandomSampler(cifar100_train, replacement=True, num_samples=5000)
-    RandomSampler(cifar100_train, replacement=True, num_samples=1000)
-
-    # Concat Pokemon and cifar100 datasets
-    pokemon_detector_train = torch.utils.data.ConcatDataset([pokemon_dataset_train, cifar100_train])
-    pokemon_detector_test = torch.utils.data.ConcatDataset([pokemon_dataset_test, cifar100_test])
-
-    pokemon_detector_loader_train = torch.utils.data.DataLoader(pokemon_detector_train,
-                                                                batch_size, shuffle=True, drop_last=True)
-    pokemon_detector_loader_test = torch.utils.data.DataLoader(pokemon_detector_test,
-                                                               batch_size, shuffle=True)
+    train_data = ImageFolder(data_dir, transform=transform['train'])
+    test_data = ImageFolder(data_dir, transform=transform['test'])
+    num_train = len(train_data)
+    indices = list(range(num_train))
+    split = int(np.floor(valid_size * num_train))
+    np.random.shuffle(indices)
+    train_idx, test_idx = indices[split:], indices[:split]
+    train_sampler = SubsetRandomSampler(train_idx)
+    test_sampler = SubsetRandomSampler(test_idx)
+    train_loader = torch.utils.data.DataLoader(train_data,
+                                               sampler=train_sampler, batch_size=batch_size)
+    test_loader = torch.utils.data.DataLoader(test_data,
+                                              sampler=test_sampler, batch_size=batch_size)
 
     data_loaders = {
-        'train': pokemon_detector_loader_train,
-        'val': pokemon_detector_loader_test
+        'train': train_loader,
+        'val': test_loader
     }
     dataset_sizes = {
-        'train': len(pokemon_detector_loader_train),
-        'val': len(pokemon_detector_loader_test)
+        'train': len(train_loader),
+        'val': len(test_loader)
     }
 
     return data_loaders, dataset_sizes
@@ -157,7 +137,7 @@ def train_model(model, data_loaders, dataset_sizes, criterion, optimizer, schedu
     return model
 
 
-def compute_accuracy(model, dataloader):
+def compute_accuracy(model, dataloader, classes):
     correct = 0
     total = 0
     with torch.no_grad():
@@ -170,8 +150,8 @@ def compute_accuracy(model, dataloader):
 
     print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
 
-    class_correct = list(0. for i in range(2))
-    class_total = list(0. for i in range(2))
+    class_correct = [0. for i in range(len(classes))]
+    class_total = [0. for i in range(len(classes))]
     with torch.no_grad():
         for data in dataloader:
             images, labels = data
@@ -183,12 +163,12 @@ def compute_accuracy(model, dataloader):
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
 
-    for i in range(2):
+    for i in range(len(classes)):
         if class_total[i] == 0.0:
-            print(pokemon_detector_classes[i])
+            print(classes[i])
         else:
             print('Accuracy of %5s : %2d %%' % (
-                pokemon_detector_classes[i], 100 * class_correct[i] / class_total[i]))
+                classes[i], 100 * class_correct[i] / class_total[i]))
 
 
 if __name__ == '__main__':
@@ -215,10 +195,26 @@ if __name__ == '__main__':
 
     torch.manual_seed(args.seed)
 
-    pokemon_detector_classes = ('Pokemon', 'Other')
+    pokemons = ['Abra', 'Aerodactyl', 'Alakazam', 'Alolan Sandslash', 'Arbok', 'Arcanine', 'Articuno', 'Beedrill',
+                'Bellsprout', 'Blastoise', 'Bulbasaur', 'Butterfree', 'Caterpie', 'Chansey', 'Charizard', 'Charmander',
+                'Charmeleon', 'Clefable', 'Clefairy', 'Cloyster', 'Cubone', 'Dewgong', 'Diglett', 'Ditto', 'Dodrio',
+                'Doduo', 'Dragonair', 'Dragonite', 'Dratini', 'Drowzee', 'Dugtrio', 'Eevee', 'Ekans', 'Electabuzz',
+                'Electrode', 'Exeggcute', 'Exeggutor', 'Farfetchd', 'Fearow', 'Flareon', 'Gastly', 'Gengar', 'Geodude',
+                'Gloom', 'Golbat', 'Goldeen', 'Golduck', 'Golem', 'Graveler', 'Grimer', 'Growlithe', 'Gyarados',
+                'Haunter', 'Hitmonchan', 'Hitmonlee', 'Horsea', 'Hypno', 'Ivysaur', 'Jigglypuff', 'Jolteon', 'Jynx',
+                'Kabuto', 'Kabutops', 'Kadabra', 'Kakuna', 'Kangaskhan', 'Kingler', 'Koffing', 'Krabby', 'Lapras',
+                'Lickitung', 'Machamp', 'Machoke', 'Machop', 'Magikarp', 'Magmar', 'Magnemite', 'Magneton', 'Mankey',
+                'Marowak', 'Meowth', 'Metapod', 'Mew', 'Mewtwo', 'Moltres', 'MrMime', 'Muk', 'Nidoking', 'Nidoqueen',
+                'Nidorina', 'Nidorino', 'Ninetales', 'Oddish', 'Omanyte', 'Omastar', 'Onix', 'Paras', 'Parasect',
+                'Persian', 'Pidgeot', 'Pidgeotto', 'Pidgey', 'Pikachu', 'Pinsir', 'Poliwag', 'Poliwhirl', 'Poliwrath',
+                'Ponyta', 'Porygon', 'Primeape', 'Psyduck', 'Raichu', 'Rapidash', 'Raticate', 'Rattata', 'Rhydon',
+                'Rhyhorn', 'Sandshrew', 'Sandslash', 'Scyther', 'Seadra', 'Seaking', 'Seel', 'Shellder', 'Slowbro',
+                'Slowpoke', 'Snorlax', 'Spearow', 'Squirtle', 'Starmie', 'Staryu', 'Tangela', 'Tauros', 'Tentacool',
+                'Tentacruel', 'Vaporeon', 'Venomoth', 'Venonat', 'Venusaur', 'Victreebel', 'Vileplume', 'Voltorb',
+                'Vulpix', 'Wartortle', 'Weedle', 'Weepinbell', 'Weezing', 'Wigglytuff', 'Zapdos', 'Zubat']
 
     # Load the training data.
-    data_loaders, dataset_sizes = _get_train_data_loader(args.data_dir, args.batch_size, pokemon_detector_classes)
+    data_loaders, dataset_sizes = _get_train_data_loader(args.data_dir, args.batch_size)
 
     model_conv = models.resnet50(pretrained=True)
     for param in model_conv.parameters():
@@ -226,7 +222,7 @@ if __name__ == '__main__':
 
     # Parameters of newly constructed modules have requires_grad=True by default
     num_ftrs = model_conv.fc.in_features
-    model_conv.fc = nn.Linear(num_ftrs, 2)
+    model_conv.fc = nn.Linear(num_ftrs, len(pokemons))
 
     model_conv = model_conv.to(device)
 
@@ -251,6 +247,6 @@ if __name__ == '__main__':
         torch.save(model_info, f)
 
     # Save the model parameters
-    model_path = os.path.join(args.model_dir, 'model_detector.pth')
+    model_path = os.path.join(args.model_dir, 'model_classifier.pth')
     with open(model_path, 'wb') as f:
         torch.save(model_conv.cpu(), f)
