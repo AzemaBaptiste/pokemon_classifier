@@ -2,6 +2,7 @@ import cv2
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import pandas as pd
+import torchvision
 from sklearn.datasets import load_files
 import numpy as np
 
@@ -52,14 +53,13 @@ def detect_human_face(file, show=True):
     # convert BGR image to RGB for plotting
     cv_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    if show:
-        # display the image, along with bounding box
-        ax = plt.axes()
-        ax.set_title(f'Number of faces detected: {len(faces)}')
-        plt.imshow(cv_rgb)
-        plt.show()
-    else:
+    if not show:
         return cv_rgb, len(faces)
+    # display the image, along with bounding box
+    ax = plt.axes()
+    ax.set_title(f'Number of faces detected: {len(faces)}')
+    plt.imshow(cv_rgb)
+    plt.show()
 
 
 def detect_human_faces(file_list):
@@ -72,13 +72,15 @@ def detect_human_faces(file_list):
 
     plt.show()
 
-    
+
 def face_detector(img_path):
     '''returns "True" if face is detected in image stored at img_path'''
     img = cv2.imread(img_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_alt.xml')
     faces = face_cascade.detectMultiScale(gray)
     return len(faces) > 0
+
 
 def imshow_tensor(inp, std_nums, mean_nums, title=None):
     """Imshow for Tensor."""
@@ -89,3 +91,11 @@ def imshow_tensor(inp, std_nums, mean_nums, title=None):
     if title is not None:
         plt.title(title)
     plt.pause(0.001)  # pause a bit so that plots are updated
+
+
+def imshow_data_loader(data_loader, std_nums, mean_nums, classes_list):
+    # Get a batch of training data
+    inputs, classes = next(iter(data_loader))
+    # Make a grid from batch
+    out = torchvision.utils.make_grid(inputs)
+    imshow_tensor(out, std_nums, mean_nums, title=[classes_list[x] for x in classes])
