@@ -242,6 +242,7 @@ def visualize_model(model, data_loaders, classes, std_nums, mean_nums, device, n
                     return
         model.train(mode=was_training)
 
+
 def global_accuracy(model, data_loader, classes):
     correct = 0
     total = 0
@@ -254,7 +255,8 @@ def global_accuracy(model, data_loader, classes):
             correct += (predicted == labels).sum().item()
 
     print('Accuracy of the network on the test images: %d %%' % (100 * correct / total))
-    
+
+
 def accuracy_per_class(model, data_loader, classes):
     class_correct = [0. for i in range(len(classes))]
     class_total = [0. for i in range(len(classes))]
@@ -275,9 +277,10 @@ def accuracy_per_class(model, data_loader, classes):
         else:
             yield classes[i], 100 * class_correct[i] / class_total[i]
 
+
 def test_accuracy(model, data_loader, classes, figsize=(25, 8)):
     global_accuracy(model, data_loader, classes)
-    
+
     res = accuracy_per_class(model, data_loader, classes)
     df = pd.DataFrame(res)
 
@@ -291,14 +294,16 @@ def test_accuracy(model, data_loader, classes, figsize=(25, 8)):
     rects = ax.bar(x - width / 2, df[1], width)
     plt.xticks(x, df[0], rotation=90)
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=100))
+
     def autolabel(rects):
         """Attach a text label above each bar in *rects*, displaying its height."""
         for rect in rects:
             height = int(rect.get_height())
             ax.annotate('{}'.format(height),
-                        xy=(rect.get_x() + rect.get_width() / 2, height +1),
+                        xy=(rect.get_x() + rect.get_width() / 2, height + 1),
                         xytext=(0, 3),  # 3 points vertical offset
                         textcoords="offset points",
                         ha='center', va='bottom')
+
     autolabel(rects)
     plt.show()

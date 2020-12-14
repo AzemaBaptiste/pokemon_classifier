@@ -1,10 +1,9 @@
 """Entry point"""
 
-from datetime import datetime
 import sys
+from datetime import datetime
 from pathlib import Path
 
-import matplotlib.image as mpimg
 import torch
 from PIL import Image
 from torch.autograd import Variable

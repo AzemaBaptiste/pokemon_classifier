@@ -1,5 +1,9 @@
+<img src="https://cdn.worldvectorlogo.com/logos/pokemon-17.svg" height="80" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://cdn.worldvectorlogo.com/logos/pokemon-13.svg" height="80" />
+
 Pokémon classifier
 ==================
+
+
 # Project overview
 
 This project aims to classify images as Pokémon. When the input image is a Pokémon, the algorithm will respond the
