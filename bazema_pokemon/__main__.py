@@ -16,7 +16,8 @@ class BazemaPokemon:
 
     def __init__(self, image_path):
         self.image_path = image_path
-        # self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # self.device = torch.device("cuda"
+        # if torch.cuda.is_available() else "cpu")
         self.transform, _, _ = utils.torch_transformations()
 
         self.pokemon_identificator()
@@ -26,8 +27,8 @@ class BazemaPokemon:
         image = Image.open(self.image_path)
         image = self.transform['test'](image).float()
         image = Variable(image, requires_grad=True)
-        image = image.unsqueeze(0)  # this is for VGG, may not be needed for ResNet
-        return image  # assumes that you're using GPU
+        image = image.unsqueeze(0)
+        return image
 
     def predict(self, model_path, classes):
         model_detector = torch.load(model_path)
@@ -55,11 +56,12 @@ class BazemaPokemon:
         res_classifier = self.pokemon_classifier()
 
         if utils.face_detector(self.image_path):
-            print(f'It\'s a Human, it looks like the Pokemon {res_classifier} !')
+            print(f'It\'s a Human, it looks like '
+                  f'the Pokemon {res_classifier} !')
         elif res_detector == 'Pokemon':
             print(f'It\'s a Pokemon: {res_classifier} !')
         else:
-            print(f'It doesn\'t look like a Pokemon nor a Human, but it looks like {res_classifier} !')
+            print(f'It\'s something and it looks like {res_classifier} !')
 
         print(f'Took {datetime.now() - start} to predict')
 

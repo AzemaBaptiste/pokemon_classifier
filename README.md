@@ -30,11 +30,11 @@ Inspired by [CNN Project: Dog Breed Classifier](https://github.com/udacity/deep-
 
 ### Training workflow
 
-![train.svg](train.svg)
+![train.svg](images/train.svg)
 
 ### Prediction workflow
 
-![predict.svg](predict.svg)
+![predict.svg](images/predict.svg)
 
 ### Resources
 
