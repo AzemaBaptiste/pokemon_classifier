@@ -7,7 +7,7 @@ setup(
     name='bazema_pokemon',
     author='Baptiste Azéma',
     author_email='baptiste@azema.tech',
-    version='1.0',
+    version='1.0-beta',
     packages=['bazema_pokemon'],
     package_data={'bazema_pokemon.resources': ['*.pth']},
     include_package_data=True,

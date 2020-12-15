@@ -12,20 +12,39 @@ lookalike.
 
 Inspired by [CNN Project: Dog Breed Classifier](https://github.com/udacity/deep-learning-v2-pytorch/tree/master/project-dog-classification)
 
-### Datasets
-    
-- [Pokemon Generation One](https://www.kaggle.com/lantian773030/pokemonclassification/)
-- [Humans](http://vis-www.cs.umass.edu/lfw/lfw.tgz)
-
 ### Technical environment
+- OpenCV
 - PyTorch
 - CNN
+- Transfer Learning
+- Image classification  
 - AWS SageMaker
 
-### Ressources
+### Datasets
+- [Labeled Faces in the Wild Home](http://vis-www.cs.umass.edu/lfw/lfw.tgz).
+  This dataset will be used to evaluate a human face detector.
+- [Pokemon Generation One](https://www.kaggle.com/lantian773030/pokemonclassificationone). 
+  This dataset will be used to train and evaluate a Pokémon detector and a classifier of Pokémon species.
+- [CIFAR-100](https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz).
+  This dataset will be used to train the Pokémon detector, providing examples not representing Pokémon.
 
+### Training workflow
+
+![train.svg](train.svg)
+
+### Prediction workflow
+
+![predict.svg](predict.svg)
+
+### Resources
+
+- https://pytorch.org/tutorials
 - https://towardsdatascience.com/how-to-train-an-image-classifier-in-pytorch-and-use-it-to-perform-basic-inference-on-single-images-99465a1e9bf5?gi=f8b2c41eddbc
 - https://curiousily.com/posts/transfer-learning-for-image-classification-using-torchvision-pytorch-and-python/
 - https://lionbridge.ai/articles/end-to-end-multiclass-image-classification-using-pytorch-and-transfer-learning/
 - https://medium.com/@011ivand3r/pytorch-pokedex-70ad86f42568
-- https://pytorch.org/tutorials
+
+
+### Todo
+- confusion matrix
+- data augmentation
