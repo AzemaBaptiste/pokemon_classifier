@@ -61,11 +61,11 @@ and reinforcement learning in order to create 2 models.
 
 ## Training workflow
 
-![train.svg](images/train.svg)
+![train.svg](../images/train.svg)
 
 ## Prediction workflow <a name="prediction_workflow"></a>
 
-![predict.svg](images/predict.svg)
+![predict.svg](../images/predict.svg)
 
 # Data exploration
 
@@ -74,7 +74,7 @@ and reinforcement learning in order to create 2 models.
 There are 13233 total human images. One face in each picture and each face is different.
 
 We can see that we have every human races represented in the dataset.
-![explo_lfw.png](images/explo_lfw.png)
+![explo_lfw.png](../images/explo_lfw.png)
 
 ## Pokémon
 
@@ -86,11 +86,11 @@ Pokémon), but we will ignore this issue
 We have multiple representations of every Pokémon. This will enable us to recognize a Pokémon specie
 even for new pictures.
 
-![explo_pokemon.png](images/explo_pokemon.png)
+![explo_pokemon.png](../images/explo_pokemon.png)
 
 #### Repartition of images per class
 
-![pokemon_repartition.png](images/pokemon_repartition.png)
+![pokemon_repartition.png](../images/pokemon_repartition.png)
 Standard deviation is about 7.<br>
 The repartition between classes is not perfect, but it will be ok.
 
@@ -113,7 +113,7 @@ decision tree to detect a human face in the image.
 
 We use a pretrained cascade classifier named `haarcascade_frontalface_alt` provided by OpenCV.
 
-![img.png](images/faces_detected.png)
+![img.png](../images/faces_detected.png)
 
 As we can see, our tool detects well the faces with few false positives.
 
@@ -122,7 +122,7 @@ As we can see, our tool detects well the faces with few false positives.
 To mesure the performance of this solution, we build a dataset of 200 images: 100 human faces and
 100 images of Pokémon. The following confusion matrix shows the performance.
 
-![faces_confusion_matrix](images/confusion.png)
+![faces_confusion_matrix](../images/confusion.png)
 
 It works quite well ! It detects well when the image is a human face 99% of the time and 98% of the
 time when it's not a human face. We have very few False-Positives and False-Negatives.
@@ -160,7 +160,7 @@ We use the following image augmentation :
 - Normalize(mean_nums=[0.485, 0.456, 0.406], std_nums=[0.229, 0.224, 0.225])
 
 The data prepareted for training is as follows:
-![](images/detect_images.png)
+![](../images/detect_images.png)
 
 
 ### Performance
@@ -168,14 +168,14 @@ The data prepareted for training is as follows:
 As shown in the graphic below, our accuracy per class computed on the test set is good: 91% for
 Pokémon and 98% for Others.
 Thus, our final application should be able to detect if the image is a Pokémon or not.
-![](images/detect_acc.png)
+![](../images/detect_acc.png)
 
 #### Result examples
 
-![detect_1](images/detect_1.png)
-![detect_2](images/detect_2.png)
-![detect_3](images/detect_3.png)
-![detect_4](images/detect_4.png)
+![detect_1](../images/detect_1.png)
+![detect_2](../images/detect_2.png)
+![detect_3](../images/detect_3.png)
+![detect_4](../images/detect_4.png)
 
 ## Pokémon classifier
 
@@ -211,7 +211,7 @@ We use the following image augmentation :
 - Normalize(mean_nums=[0.485, 0.456, 0.406], std_nums=[0.229, 0.224, 0.225])
 
 The data prepared for training is as follows:
-![classify_dataset](images/classify_dataset.png)
+![classify_dataset](../images/classify_dataset.png)
 
 
 ### Modeling
@@ -225,19 +225,19 @@ We use 3 subset of the data:
 - validation set to compute metric during the training
 - test set to compute accuracy after training on new data
 
-![classifier_split.png](images/classifier_split.png)
+![classifier_split.png](../images/classifier_split.png)
 ### Performance
 
 #### Performance on the validation set
-![classifier_acc_train.png](images/classifier_acc_train.png)
-![classifier_loss_train.png](images/classifier_loss_train.png)
+![classifier_acc_train.png](../images/classifier_acc_train.png)
+![classifier_loss_train.png](../images/classifier_loss_train.png)
 
 #### Performance after training on the test set
 Try to predict on new data:
-![classifier_loss_train.png](images/classifier_1.png)
-![classifier_loss_train.png](images/classifier_2.png)
-![classifier_loss_train.png](images/classifier_3.png)
-![classifier_loss_train.png](images/classifier_4.png)
+![classifier_loss_train.png](../images/classifier_1.png)
+![classifier_loss_train.png](../images/classifier_2.png)
+![classifier_loss_train.png](../images/classifier_3.png)
+![classifier_loss_train.png](../images/classifier_4.png)
 
 > Accuracy of the network on the test images: 82 %
 
@@ -251,6 +251,14 @@ Our final application is written in Python and uses:
 - our `pokemon_detector.pth` model trained
 - our `pokemon_classifier.pth` model trained
 
+The process is, for an input image:
+- take an image as input
+- detect what's on the image
+    - use Human detector (opencv)
+    - use Pokemon detector (pytorch model)
+- use the trained Pokemon classifier to give the name of the Pokémon (if it's a Pokémon), 
+or the Pokémon it looks like (if it's a Human or something else)
+
 The usage is pretty simple, you can run it with docker. 
 You can check the [prediction_workflow](#prediction_workflow) for the detailed process. 
 
@@ -260,6 +268,39 @@ Exemple usage
       --image_path pokemon.jpg
     I guess it's a Pokemon: Abra !
     Took 0:00:00.219980 to predict
+
+Prediction on few samples:
+![predict_1.png](../images/predict_1.png)
+> It's a Human, it looks like the Pokemon Blastoise ! <br>
+> Took 0:00:00.202679 to predict
+
+![predict_2.png](../images/predict_2.png)
+> It doesn't look like a Pokemon nor a Human, but it looks like Rattata !<br>
+Took 0:00:00.220836 to predict
+
+![predict_3.png](../data/Pokemon/Exeggcute/58983b10ed8e423a9c42473ae0157745.jpg)
+> It's a Human, it looks like the Pokemon Exeggcute !<br>
+Took 0:00:00.274708 to predict
+
+![predict_4.png](../data/lfw/Abdoulaye_Wade/Abdoulaye_Wade_0001.jpg)
+> It's a Human, it looks like the Pokemon Pidgeot !<br>
+> Took 0:00:00.309213 to predict
+
+![predict_4.png](../data/lfw/Adam_Freier/Adam_Freier_0001.jpg)
+> It's a Human, it looks like the Pokemon Tauros !<br>
+> Took 0:00:00.281719 to predict
+
+![predict_4.png](../data/lfw/Park_Na-kyong/Park_Na-kyong_0001.jpg)
+> It's a Human, it looks like the Pokemon Exeggutor !<br>
+Took 0:00:00.230931 to predict
+
+![predict_4.png](../data/lfw/Pat_Wharton/Pat_Wharton_0001.jpg)
+> It's a Human, it looks like the Pokemon Drowzee !<br>
+Took 0:00:00.221947 to predict
+
+![predict_4.png](../chicken.jpeg)
+> It doesn't look like a Pokemon nor a Human, but it looks like Spearow !<br>
+Took 0:00:00.227700 to predict
 
 
 # Futur improvements

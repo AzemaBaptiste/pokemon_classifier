@@ -14,7 +14,11 @@ COPY Makefile ./
 COPY setup.py ./
 COPY README.md ./
 COPY MANIFEST.in ./
+COPY chicken.jpeg ./
 
 RUN make install
+
+# Cache resnet50 in the image
+RUN bazema_pokemon --image_path chicken.jpeg
 
 ENTRYPOINT ["bazema_pokemon"]

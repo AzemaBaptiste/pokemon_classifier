@@ -1,4 +1,4 @@
-all: clean build test install
+all: clean build install
 
 clean:
 	rm -Rf *.egg-info
@@ -9,6 +9,7 @@ clean:
 
 build: clean
 	python3 setup.py sdist
+	docker build -t bazema_pokemon:1.0 .
 
 #tests:
 #	flake8 -vv bazema_pokemon
