@@ -42,7 +42,7 @@ Inspired by [CNN Project: Dog Breed Classifier](https://github.com/udacity/deep-
 
 ```shell
 # Assuming you have an image named "pika.jpg" in the current directory
-docker run -v $PWD:/app bazema_pokemon:latest --image_path pika.jpg
+docker run -v $PWD:/app bameza/bazema_pokemon:latest --image_path pika.jpg
 ```
 
 ## Local development
