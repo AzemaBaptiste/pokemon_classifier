@@ -29,5 +29,5 @@ deploy-pip: install
 	twine upload -u bameza -p ${PYPI_PWD} --skip-existing dist/*
 
 pdf:
-	docker run --rm -v $PWD:/app jmaupetit/md2pdf --css style.css project_report.md project_report.pdf
-	docker run --rm -v $PWD:/app jmaupetit/md2pdf --css style.css proposal.md proposal.pdf
+	docker run --rm -v $PWD:/app jmaupetit/md2pdf --css pdf/style.css pdf/project_report.md pdf/project_report.pdf
+	docker run --rm -v $PWD:/app jmaupetit/md2pdf --css pdf/style.css pdf/proposal.md pdf/proposal.pdf
