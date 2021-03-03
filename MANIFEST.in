@@ -1,1 +1,2 @@
+include bazema_pokemon/resources/**/*
 include bazema_pokemon/resources/*

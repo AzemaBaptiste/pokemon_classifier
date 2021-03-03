@@ -7,5 +7,6 @@ scikit-learn
 opencv-contrib-python
 tqdm
 numpy
-sagemaker
 pyyaml
+flake8
+ipywidgets

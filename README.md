@@ -17,13 +17,13 @@ Inspired by [CNN Project: Dog Breed Classifier](https://github.com/udacity/deep-
 - PyTorch
 - CNN
 - Transfer Learning
-- Image classification  
-- AWS SageMaker
+- Image classification
+- Colab
 
 ### Datasets
 - [Labeled Faces in the Wild Home](http://vis-www.cs.umass.edu/lfw/lfw.tgz).
   This dataset will be used to evaluate a human face detector.
-- [Pokemon Generation One](https://www.kaggle.com/lantian773030/pokemonclassificationone). 
+- [Pokemon Generation One](https://www.kaggle.com/lantian773030/pokemonclassification). 
   This dataset will be used to train and evaluate a Pokémon detector and a classifier of Pokémon species.
 - [CIFAR-100](https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz).
   This dataset will be used to train the Pokémon detector, providing examples not representing Pokémon.
@@ -36,6 +36,29 @@ Inspired by [CNN Project: Dog Breed Classifier](https://github.com/udacity/deep-
 
 ![predict.svg](images/predict.svg)
 
+# Usage
+
+## Docker (recommended)
+
+```shell
+# Assuming you have an image named "pika.jpg" in the current directory
+docker run -v $PWD:/app bazema_pokemon:latest --image_path pika.jpg
+```
+
+## Local development
+
+#### Requirements
+Python >= 3.6
+
+```shell
+virtualenv -p python3.8 venv && source venv/bin/activate
+make install
+make linter
+
+bazema_pokemon --image_path pika.jpg
+```
+
+
 ### Resources
 
 - https://pytorch.org/tutorials
@@ -46,5 +69,4 @@ Inspired by [CNN Project: Dog Breed Classifier](https://github.com/udacity/deep-
 
 
 ### Todo
-- confusion matrix
-- data augmentation
+- make docker image smaller

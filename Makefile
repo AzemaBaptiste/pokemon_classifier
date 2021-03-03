@@ -10,19 +10,24 @@ clean:
 build: clean
 	python3 setup.py sdist
 
-test:
-	pytest -vv
-	coverage run --source=bazema_pokemon -m pytest
-	coverage report --omit="*/test*"
+#tests:
+#	flake8 -vv bazema_pokemon
+#	coverage run --source=bazema_pokemon -m pytest
+#	coverage report --omit="*/test*"
 
 linter:
 	pip install -r requirements.txt
-	pylint bazema_pokemon --output-format=text --ignore-patterns=test --fail-under=8
+	pip install pylint
+	pylint bazema_pokemon
 
-install: build clean
-	pip install -r requirements.txt
+install: clean
+	pip install torch torchvision torchaudio opencv-contrib-python
 	python setup.py install
 
 deploy-pip: install
 	pip install twine
 	twine upload -u bameza -p ${PYPI_PWD} --skip-existing dist/*
+
+pdf:
+	docker run --rm -v $PWD:/app jmaupetit/md2pdf --css style.css project_report.md project_report.pdf
+	docker run --rm -v $PWD:/app jmaupetit/md2pdf --css style.css proposal.md proposal.pdf

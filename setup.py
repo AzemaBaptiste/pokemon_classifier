@@ -1,15 +1,16 @@
 from pkg_resources import parse_requirements
 from setuptools import setup
 
-REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
+# REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
+REQUIREMENTS = ['torch', 'torchvision', 'torchaudio', 'opencv-contrib-python']
 
 setup(
     name='bazema_pokemon',
     author='Baptiste Azéma',
     author_email='baptiste@azema.tech',
-    version='1.0-beta',
+    version='1.0',
     packages=['bazema_pokemon'],
-    package_data={'bazema_pokemon.resources': ['*.pth']},
+    package_data={'bazema_pokemon.resources': ['*.pth', '**/*.xml']},
     include_package_data=True,
     python_requires='~=3.6',
     install_requires=REQUIREMENTS,

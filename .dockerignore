@@ -1,0 +1,21 @@
+data/
+
+# venv
+venv
+venv*
+
+# IDE
+.idea/
+
+# Python
+.ipynb_checkpoints
+*/.ipynb_checkpoints/
+**/__pycache__/
+bazema_pokemon/__pycache__/
+.coverage
+build/
+dist/
+*.egg-info/
+
+notebooks/
+.git/
